@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Гра #{{ game_id }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+    table { border-collapse: collapse; }
+    th, td {
+      width: 24px; height: 24px;
+      border: 1px solid #999;
+      text-align: center; vertical-align: middle;
+      font-size: 0.9rem;
+    }
+    .coords th { background: #f0f0f0; }
+  </style>
+
+  {% if not winner and (not player_o or current_player_id != next_player_id) %}
+    <meta http-equiv="refresh"
+          content="3;url={{ url_for('game_view', game_id=game_id, player_id=current_player_id) }}">
+  {% endif %}
+</head>
+<body>
+  <h1>Гра #{{ game_id }}</h1>
+  <p>Перший (X): {{ player_x }}</p>
+  <p>Другий (O): {{ player_o or 'чекаємо' }}</p>
+
+  {% if not player_o %}
+    <p>Чекаємо другого гравця…</p>
+    <a href="{{ url_for('index') }}">← Назад</a>
+  {% else %}
+
+    {% if winner %}
+      <h2>Переможець: {{ winner }}</h2>
+      <a href="{{ url_for('index') }}">← Назад</a>
+    {% else %}
+
+      <h2>Наступний хід: {{ next_symbol }}</h2>
+
+      {% if current_player_id == next_player_id %}
+        <form class="move-form"
+              action="{{ url_for('make_move', game_id=game_id) }}?player_id={{ current_player_id }}"
+              method="post">
+          <fieldset>
+            <legend>Ваш хід ({{ next_symbol }})</legend>
+
+            <label for="move_x">Стовпець X:</label>
+            <input type="number"
+                   id="move_x"
+                   name="x"
+                   placeholder="Введіть X-координату"
+                   required>
+
+            <label for="move_y">Рядок Y:</label>
+            <input type="number"
+                   id="move_y"
+                   name="y"
+                   placeholder="Введіть Y-координату"
+                   required>
+
+            <button type="submit">Зробити хід</button>
+            <button type="submit"
+                    formnovalidate
+                    formaction="{{ url_for('resign', game_id=game_id) }}?player_id={{ current_player_id }}">
+              Здатися
+            </button>
+          </fieldset>
+        </form>
+
+      {% else %}
+        <p>Зараз ходить суперник, чекайте…</p>
+      {% endif %}
+
+      {% if error_message %}
+        <div class="error">{{ error_message }}</div>
+      {% endif %}
+
+      <table class="coords">
+        <thead>
+          <tr>
+            <th></th>
+            {# internal 0… → labels 1… #}
+            {% for x in x_coords %}
+              <th>{{ x + 1 }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for y in y_coords %}
+            <tr>
+              <th>{{ y + 1 }}</th>
+              {% for x in x_coords %}
+                {% set key = (x, y) %}
+                <td class="{% if last_move and key == last_move %}last-move{% endif %}">
+                  {{ moves_map.get(key, '') }}
+                </td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    {% endif %}
+
+  {% endif %}
+</body>
+</html>

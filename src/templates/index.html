@@ -3,14 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <title>Креноль — головна</title>
-  <link rel="stylesheet" href="../static/styles.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
   <h1>Ласкаво просимо в Креноль</h1>
-  <form action="/create_game" method="post">
-    <label for="username">Ваше ім'я:</label>
-    <input type="text" name="username" id="username" required>
-    <button type="submit">Створити гру</button>
-  </form>
+
+  <section>
+    <h2>Створити нову гру</h2>
+    <form action="{{ url_for('create_game') }}" method="post">
+      <label for="create_username">Ваше ім'я:</label>
+      <input type="text" id="create_username" name="username" required>
+      <button type="submit">Створити гру</button>
+    </form>
+  </section>
+
+  <section style="margin-top:2rem;">
+    <h2>Приєднатися до гри</h2>
+    <form action="{{ url_for('join_game') }}" method="post">
+      <label for="join_game_id">Номер гри:</label>
+      <input type="number" id="join_game_id" name="game_id" min="1" required>
+      <label for="join_username">Ваше ім’я:</label>
+      <input type="text" id="join_username" name="username" required>
+      <button type="submit">Приєднатися</button>
+    </form>
+    <p><a href="{{ url_for('replays') }}">→ Переглянути завершені ігри</a></p>
+  </section>
 </body>
 </html>
