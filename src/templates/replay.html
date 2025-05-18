@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Реплей гри #{{ game_id }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+    table { border-collapse: collapse; }
+    th, td {
+      width: 24px; height: 24px;
+      border: 1px solid #999;
+      text-align: center; vertical-align: middle;
+      font-size: 0.9rem;
+    }
+    .coords th { background: #f0f0f0; }
+    .controls { margin: 1rem 0; }
+  </style>
+</head>
+<body>
+  <h1>Реплей гри #{{ game_id }}</h1>
+  <div class="controls">
+    {% if step > 1 %}
+      <a href="{{ url_for('replay', game_id=game_id, step=step-1) }}">← Попередній крок</a>
+    {% endif %}
+    Крок {{ step }} з {{ max_step }}
+    {% if step < max_step %}
+      <a href="{{ url_for('replay', game_id=game_id, step=step+1) }}">Наступний крок →</a>
+    {% endif %}
+  </div>
+
+  <table class="coords">
+    <thead>
+      <tr><th></th>
+        {% for x in range(1,26) %}<th>{{ x }}</th>{% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for y in range(1,26) %}
+        <tr>
+          <th>{{ y }}</th>
+          {% for x in range(1,26) %}
+            {% set key = (x-1, y-1) %}
+            <td>{{ moves_map.get(key, '') }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p><a href="{{ url_for('replays') }}">← Повернутись до списку</a></p>
+  <p><a href="{{ url_for('index') }}">← На головну</a></p>
+</body>
+</html>

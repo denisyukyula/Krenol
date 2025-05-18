@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Завершені ігри</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <h1>Завершені ігри (реплеї)</h1>
+
+  {% if games %}
+    <table class="styled">
+      <thead>
+        <tr>
+          <th>№ гри</th>
+          <th>Дата</th>
+          <th>Гравець X</th>
+          <th>Гравець O</th>
+          <th>Переможець</th>
+          <th>Дія</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for g in games %}
+          <tr>
+            <td>{{ g.id }}</td>
+            <td>{{ g.created }}</td>
+            <td>{{ g.x_name }}</td>
+            <td>{{ g.o_name }}</td>
+            <td>{{ g.winner }}</td>
+            <td><a href="{{ url_for('replay', game_id=g.id) }}">Переглянути</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Ще немає завершених ігор.</p>
+  {% endif %}
+
+  <p><a href="{{ url_for('index') }}">← На головну</a></p>
+</body>
+</html>
